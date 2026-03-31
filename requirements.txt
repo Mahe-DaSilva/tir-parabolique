@@ -1,0 +1,1 @@
+﻿Installer la bibliothèque matplotlib.pyplot avec l'installeur de votre choix (dans un venv ou nom selon vos préférence)
