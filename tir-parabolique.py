@@ -3,12 +3,52 @@ import matplotlib.pyplot as plt # type: ignore
 
 g = 9.81 # Accélération gravitationnelle
 
+def verification(test, donnee=None):
+    try :
+        value = float(test)
+        return value
+    except ValueError :
+        if donnee == "v" :
+            print("Entrez une vitesse valide.")
+        elif donnee == "h" :
+            print("Entrez une hauteur valide.")
+        elif donnee == "ang" :
+            print("Entrez un angle valide.")
+        else :
+            print("Entrez un nombre valide.")
+        print()
+        return None
+
 print()
 
+# Intialisation des valeurs initiales à -1 et 100 pour éviter plus tard les valeurs invalides
+v0 = -1
+h0 = -1
+ang = 100
+
 # Récupération des conditions initiales
-v0 = float(input("Vitesse initiale (en m/s) : "))
-h0 = float(input("Hauteur initiale (en m) : "))
-ang = float(input("Angle du tir (en degrés) : "))
+while v0 is None or v0 < 0 :
+    v0_input = input("Vitesse initiale (en m/s, obligatoirement positive) : ")
+    print()
+    v0 = verification(v0_input, "v")
+
+while h0 is None or h0 < 0 :
+    h0_input = input("Hauteur initiale (en m, obligatoirement positive) : ")
+    print()
+    h0 = verification(h0_input, "h")
+
+if h0 == 0 :
+    while ang is None or ang > 90 or ang < 0 :
+        ang_input = input("Angle du tir (en degrés compris entre 0 et 90 si h==0, peut être négatif si h>0) : ")
+        print()
+        ang = verification(ang_input, "ang")
+
+else :
+    while ang is None or ang > 90 :
+        ang_input = input("Angle du tir (en degrés compris entre 0 et 90 si h==0, peut être négatif si h>0) : ")
+        print()
+        ang = verification(ang_input, "ang")
+
 
 ang_rad = math.radians(ang) # Convertion de l'angle de degrés à radians
 
@@ -16,7 +56,7 @@ ang_rad = math.radians(ang) # Convertion de l'angle de degrés à radians
 x = [0]
 y = [h0] # Hauteur initiale
 
-t = 0.01
+t = 0.01 # On initialise t=0.01 car la position à t=0 est déjà enregistrée dans les conditions initiales
 while y[-1] >= 0 :
     xt = v0 * math.cos(ang_rad) * t
     yt = v0 * math.sin(ang_rad) * t - 1/2*g*t**2 + h0
