@@ -3,51 +3,64 @@ import matplotlib.pyplot as plt # type: ignore
 
 g = 9.81 # Accélération gravitationnelle
 
-def verification(test, donnee=None):
+def verification(test, donnee=None, h=None):
     try :
         value = float(test)
-        return value
     except ValueError :
-        if donnee == "v" :
-            print("Entrez une vitesse valide.")
-        elif donnee == "h" :
-            print("Entrez une hauteur valide.")
-        elif donnee == "ang" :
-            print("Entrez un angle valide.")
-        else :
-            print("Entrez un nombre valide.")
-        print()
         return None
+
+    if donnee == "v" or donnee == "h" :
+            if value > 0 :
+                return value
+            else : return None
+
+    if donnee == "ang" :
+        if h == 0 :
+            if value > 0 and value <= 90 :
+                return value
+            else :
+                return None
+        elif h > 0 :
+            if value >= -90 and value <= 90 :
+                return value
+            else :
+                return None
 
 print()
 
 # Intialisation des valeurs initiales à -1 et 100 pour éviter plus tard les valeurs invalides
-v0 = -1
-h0 = -1
-ang = 100
+v0 = None
+h0 = None
+ang = None
+
+test_v0 = False
+test_h0 = False
+test_ang = False
 
 # Récupération des conditions initiales
-while v0 is None or v0 < 0 :
+while test_v0 != True :
     v0_input = input("Vitesse initiale (en m/s, obligatoirement positive) : ")
-    print()
     v0 = verification(v0_input, "v")
+    if v0 == None :
+        print("Entrez une vitesse valide.")
+    else :
+        test_v0 = True
 
-while h0 is None or h0 < 0 :
+while test_h0 != True :
     h0_input = input("Hauteur initiale (en m, obligatoirement positive) : ")
-    print()
     h0 = verification(h0_input, "h")
+    if h0 == None :
+        print("Entrez une hauteur valide.")
+    else :
+        test_h0 = True
 
-if h0 == 0 :
-    while ang is None or ang > 90 or ang < 0 :
-        ang_input = input("Angle du tir (en degrés compris entre 0 et 90 si h==0, peut être négatif si h>0) : ")
-        print()
-        ang = verification(ang_input, "ang")
-
-else :
-    while ang is None or ang > 90 :
-        ang_input = input("Angle du tir (en degrés compris entre 0 et 90 si h==0, peut être négatif si h>0) : ")
-        print()
-        ang = verification(ang_input, "ang")
+while test_ang != True :
+    ang_input = input("Angle du tir (en degrés, 0 < angle < 90 si h==0, -90 < angle < 90 si h > 0) : ")
+    ang = verification(ang_input, "ang", h0)
+    if ang == None :
+        print("Entrez un angle valide.")
+    else :
+        test_ang = True
 
 
 ang_rad = math.radians(ang) # Convertion de l'angle de degrés à radians
@@ -72,7 +85,7 @@ print()
 print(f"Portée : {portee:.2f}m, hauteur maximale : {hauteur_max:.2f}m")
 
 # Traçage de la courbe
-plt.plot(x,y) # Création desa axes
+plt.plot(x,y) # Création des axes
 plt.xlabel("portée") # Nom de l'axe des abscisses x
 plt.ylabel("hauteur") # Nom de l'axe des ordonnées
 plt.title("Trajectoire du tir") # Titre du schéma
