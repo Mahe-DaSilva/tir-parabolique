@@ -10,9 +10,10 @@ def verification(test, donnee=None, h=None):
         return None
 
     if donnee == "v" or donnee == "h" :
-            if value > 0 :
+            if value >= 0 :
                 return value
-            else : return None
+            else : 
+                return None
 
     if donnee == "ang" :
         if h == 0 :
@@ -26,41 +27,26 @@ def verification(test, donnee=None, h=None):
             else :
                 return None
 
-print()
+def demander_valeur(val_init, h = None):
+    val = None
+    while val is None :
+        inp = input(msg[val_init]['msg_inp'])
+        val = verification(inp, msg[val_init]['type'], h)
+        if val is None :
+            print(msg[val_init]['msg_err'])
+    return val
 
-# Intialisation des valeurs initiales à -1 et 100 pour éviter plus tard les valeurs invalides
-v0 = None
-h0 = None
-ang = None
-
-test_v0 = False
-test_h0 = False
-test_ang = False
+# Définition des messages d'input, des messages d'erreurs et types associés aux valeur initiales
+msg = {
+    "v0" : {'msg_inp' : "Vitesse initiale (en m/s, obligatoirement positive) : ", 'msg_err' : "Entrez une vitesse valide.", 'type' : 'v'},
+    "h0" : {'msg_inp' : "Hauteur initiale (en m, obligatoirement positive) : ", 'msg_err' : "Entrez une hauteur valide.", 'type' : 'h'},
+    "ang" : {'msg_inp' : "Angle du tir (en degrés, 0 < angle < 90 si h==0, -90 < angle < 90 si h > 0) : ", 'msg_err' : "Entrez un angle valide.", 'type' : 'ang'}
+}
 
 # Récupération des conditions initiales
-while test_v0 != True :
-    v0_input = input("Vitesse initiale (en m/s, obligatoirement positive) : ")
-    v0 = verification(v0_input, "v")
-    if v0 == None :
-        print("Entrez une vitesse valide.")
-    else :
-        test_v0 = True
-
-while test_h0 != True :
-    h0_input = input("Hauteur initiale (en m, obligatoirement positive) : ")
-    h0 = verification(h0_input, "h")
-    if h0 == None :
-        print("Entrez une hauteur valide.")
-    else :
-        test_h0 = True
-
-while test_ang != True :
-    ang_input = input("Angle du tir (en degrés, 0 < angle < 90 si h==0, -90 < angle < 90 si h > 0) : ")
-    ang = verification(ang_input, "ang", h0)
-    if ang == None :
-        print("Entrez un angle valide.")
-    else :
-        test_ang = True
+v0 = demander_valeur("v0")
+h0 = demander_valeur("h0")
+ang = demander_valeur("ang", h0)
 
 
 ang_rad = math.radians(ang) # Convertion de l'angle de degrés à radians
@@ -91,6 +77,6 @@ plt.ylabel("hauteur") # Nom de l'axe des ordonnées
 plt.title("Trajectoire du tir") # Titre du schéma
 plt.grid(True) # Affichage de la grille
 plt.gca().set_aspect('equal') # Échelle orthonormée des axes
-plt.xlim(-1, portee + 1) # Réglage du cadrage xmin et xmax
-plt.ylim(-1, hauteur_max + 1) # Réglage du cadrage ymin et ymax
+plt.xlim(-2, portee + 2) # Réglage du cadrage xmin et xmax
+plt.ylim(-2, hauteur_max*1.3) # Réglage du cadrage ymin et ymax
 plt.show() # Affichage de la courbe
