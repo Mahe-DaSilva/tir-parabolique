@@ -1,5 +1,6 @@
 import math
 import matplotlib.pyplot as plt # type: ignore
+import numpy as np # type: ignore
 
 g = 9.81 # Accélération gravitationnelle
 
@@ -36,6 +37,20 @@ def demander_valeur(val_init, h = None):
             print(msg[val_init]['msg_err'])
     return val
 
+def pas_rond(valeur):
+    # Recherche de la puissance de 10 inférieure la plus proche
+    puissance = 10 ** math.floor(math.log10(valeur))
+
+    # Normalisation de la valeur entre 1 et 10 pour la comparer aux paliers
+    val_norm = valeur / puissance
+
+    # Choix du palier adéquat dans le cycle 1, 2.5, 5, 10
+    paliers = [1, 2.5, 5, 10]
+    for palier in paliers :
+        if palier >= val_norm : # Premier palier au dessus de la valeur normalisée
+            return palier * puissance # Remise à échelle du palier
+
+
 # Définition des messages d'input, des messages d'erreurs et types associés aux valeur initiales
 msg = {
     "v0" : {'msg_inp' : "Vitesse initiale (en m/s, obligatoirement positive) : ", 'msg_err' : "Entrez une vitesse valide.", 'type' : 'v'},
@@ -69,14 +84,20 @@ hauteur_max = max(y) # Plus grande valeur de y (ordonnée maximale au sommet de 
 
 print()
 print(f"Portée : {portee:.2f}m, hauteur maximale : {hauteur_max:.2f}m")
+print()
+
+maxi=max(portee, hauteur_max)
+marge=min(portee, hauteur_max)
 
 # Traçage de la courbe
+plt.title("Trajectoire du tir") # Titre du schéma
 plt.plot(x,y) # Création des axes
 plt.xlabel("portée") # Nom de l'axe des abscisses x
-plt.ylabel("hauteur") # Nom de l'axe des ordonnées
-plt.title("Trajectoire du tir") # Titre du schéma
+plt.ylabel("hauteur") # Nom de l'axe des ordonnées y
 plt.grid(True) # Affichage de la grille
 plt.gca().set_aspect('equal') # Échelle orthonormée des axes
-plt.xlim(-2, portee + 2) # Réglage du cadrage xmin et xmax
-plt.ylim(-2, hauteur_max*1.3) # Réglage du cadrage ymin et ymax
+plt.xticks(np.arange(0, maxi, pas_rond(maxi*0.05)))
+plt.yticks(np.arange(0, maxi, pas_rond(maxi*0.05)))
+plt.xlim(-marge*0.1, portee*1.05) # Réglage du cadrage xmin et xmax
+plt.ylim(-marge*0.1, hauteur_max*1.3) # Réglage du cadrage ymin et ymax
 plt.show() # Affichage de la courbe
